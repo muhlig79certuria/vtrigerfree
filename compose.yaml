@@ -1,34 +1,18 @@
-version: '3.8'
-
 services:
   vtiger:
     build:
       context: .
       dockerfile: Dockerfile
+      platform: linux/amd64
     ports:
       - "8080:80"
     depends_on:
       - db
-    networks:
-      - vtiger-net
-    platform: linux/amd64
-
   db:
-    image: mysql:5.6
-    restart: always
+    image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: geheim
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: vtiger
-      MYSQL_USER: vtigeruser
-      MYSQL_PASSWORD: geheim
-    volumes:
-      - db_data:/var/lib/mysql
-    networks:
-      - vtiger-net
+      MYSQL_USER: vtiger
+      MYSQL_PASSWORD: vtiger
     platform: linux/amd64
-
-networks:
-  vtiger-net:
-
-volumes:
-  db_data:
