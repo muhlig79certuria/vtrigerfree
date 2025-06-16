@@ -8,14 +8,6 @@ RUN apt-get update && \
     php5.6-curl php5.6-gd php5.6-mbstring php5.6-xml php5.6-zip \
     unzip wget
 
-WORKDIR /var/www/html
-
-RUN wget https://sourceforge.net/projects/vtigercrm/files/vtiger%20CRM%206.0.0/Core%20Product/vtigercrm600.tar.gz && \
-    tar -xvzf vtigercrm600.tar.gz && \
-    mv vtigercrm /var/www/html/vtiger && \
-    chown -R www-data:www-data /var/www/html/vtiger && \
-    rm vtigercrm600.tar.gz
+COPY . /var/www/html/
 
 EXPOSE 80
-
-CMD ["apachectl", "-D", "FOREGROUND"]
