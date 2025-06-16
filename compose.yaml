@@ -1,9 +1,25 @@
-version: '3'
+version: "3.8"
 
 services:
   vtiger:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:80"
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: vtiger
+      MYSQL_USER: vtigeruser
+      MYSQL_PASSWORD: vtigerpass
     volumes:
-      - ./vtiger:/var/www/html
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
