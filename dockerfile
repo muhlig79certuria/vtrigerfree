@@ -1,22 +1,18 @@
-FROM ubuntu:18.04
+FROM php:5.6-apache
 
 RUN apt-get update && \
-    apt-get install -y software-properties-common curl gnupg2 && \
-    add-apt-repository ppa:ondrej/php && \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y apache2 php5.6 \
-        php5.6-mysql libapache2-mod-php5.6 php5.6-curl php5.6-gd \
-        php5.6-mbstring php5.6-xml php5.6-zip unzip wget && \
+    apt-get install -y \
+    libpng-dev libjpeg-dev libfreetype6-dev zlib1g-dev \
+    libxml2-dev unzip wget && \
+    docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
+    docker-php-ext-install gd mysqli pdo pdo_mysql mbstring zip xml && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN wget -O /tmp/vtiger.zip \
-    "https://downloads.sourceforge.net/project/vtigercrm/vtiger%20CRM%206.0.0/Core%20Product/vtigercrm6.0.0.zip" && \
-    unzip /tmp/vtiger.zip -d /var/www/html/ && \
-    mv /var/www/html/vtigercrm6.0.0/* /var/www/html/ && \
-    rm -rf /tmp/vtiger.zip /var/www/html/vtigercrm6.0.0
+WORKDIR /var/www/html
 
-RUN chown -R www-data:www-data /var/www/html
+RUN wget -q https://downloads.sourceforge.net/project/vtigercrm/vtiger%20CRM%206.0.0/Core%20Product/vtigercrm6.0.0.tar.gz && \
+    tar xzf vtigercrm6.0.0.tar.gz --strip 1 && \
+    chown -R www-data:www-data /var/www/html && \
+    rm vtigercrm6.0.0.tar.gz
 
 EXPOSE 80
-
-CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
